@@ -107,6 +107,8 @@ export function useCookieConsent() {
     return {
         prefs,
         hasChosen,
+        consent: prefs,
+        isReady: hasChosen,
         acceptAll,
         rejectAll,
         saveCustom,

@@ -1,0 +1,62 @@
+name: TruthWorldNews Pipeline
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'  # Every 4 hours
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests feedparser
+      
+      - name: Run scraper
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/scraper.py
+      
+      - name: Run LLM engine
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/llm_engine.py
+      
+      - name: Keep Supabase alive
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          curl -s -H "apikey: $SUPABASE_SERVICE_KEY" \
+            "$SUPABASE_URL/rest/v1/posts?select=id&limit=1"
+
+  gsc-tracker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install google-api-python-client google-auth requests
+      - name: Run GSC tracker
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/gsc_tracker.py

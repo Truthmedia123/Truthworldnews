@@ -1,28 +1,33 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import Script from 'next/script';
 import { useCookieConsent } from '@/hooks/useCookieConsent';
-import AdSenseBaseScript from '@/components/AdSenseBaseScript';
-import AdSlot from '@/components/AdSlot';
 
-/**
- * Client wrapper that conditionally renders AdSense components
- * only when the user has consented to marketing cookies.
- *
- * Place this in the root layout — it reads localStorage to decide
- * whether to load the AdSense base script and ad units.
- */
 export default function ConditionalAds() {
-    const { marketingAllowed, hasChosen } = useCookieConsent();
+  const { consent, isReady } = useCookieConsent();
+  const [shouldLoad, setShouldLoad] = useState(false);
 
-    // Don't render ads until the user has made a choice AND opted in
-    if (!hasChosen || !marketingAllowed) return null;
+  useEffect(() => {
+    if (!isReady) return;
+    setShouldLoad((consent?.analytics ?? false) && (consent?.marketing ?? false));
+  }, [consent, isReady]);
 
-    return (
-        <>
-            <AdSenseBaseScript />
-            <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                <AdSlot format="horizontal" />
-            </div>
-        </>
-    );
+  if (!shouldLoad) return null;
+
+  return (
+    <>
+      <Script
+        id="adsense-script"
+        strategy="afterInteractive"
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
+        crossOrigin="anonymous"
+      />
+      <Script id="adsense-init" strategy="afterInteractive">
+        {`
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        `}
+      </Script>
+    </>
+  );
 }

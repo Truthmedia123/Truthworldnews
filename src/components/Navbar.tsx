@@ -6,10 +6,12 @@ import { usePathname, useRouter } from 'next/navigation';
 
 const NAV_LINKS = [
     { href: '/', label: 'Latest' },
-    { href: '/', label: 'Trending' },
-    { href: '/', label: 'Tech' },
-    { href: '/', label: 'Politics' },
+    { href: '/category/ai/', label: 'AI' },
+    { href: '/category/crypto/', label: 'Crypto' },
+    { href: '/category/weird-tech/', label: 'Weird Tech' },
+    { href: '/search/', label: 'Search' },
     { href: '/quizzes', label: 'Quizzes' },
+    { href: '/premium/', label: 'Premium' },
 ] as const;
 
 export default function Navbar() {

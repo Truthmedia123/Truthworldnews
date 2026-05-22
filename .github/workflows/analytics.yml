@@ -1,0 +1,26 @@
+name: TruthWorldNews Analytics
+
+on:
+  schedule:
+    - cron: '0 10 * * 0'  # Every Sunday 10 AM UTC
+  workflow_dispatch:
+
+jobs:
+  analytics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Generate analytics report
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/analytics_dashboard.py
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-report
+          path: weekly_report_*.md

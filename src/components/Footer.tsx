@@ -55,6 +55,8 @@ export default function Footer() {
           <div className="flex flex-col">
             <h3 className="text-[#FFFF00] font-inter font-black uppercase text-sm mb-4 tracking-widest">Legal</h3>
             <ul className="space-y-2 font-bold text-sm">
+              <li><Link href="/editorial-log/" className="hover:text-[#FFFF00] transition-colors">Editorial Log</Link></li>
+              <li><Link href="/fact-checking/" className="hover:text-[#FFFF00] transition-colors">Fact-Checking</Link></li>
               <li><Link href="/privacy-policy" className="hover:text-[#FFFF00] transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms-of-service" className="hover:text-[#FFFF00] transition-colors">Terms of Service</Link></li>
               <li><Link href="/cookie-policy" className="hover:text-[#FFFF00] transition-colors">Cookie Policy</Link></li>

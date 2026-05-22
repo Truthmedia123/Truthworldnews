@@ -1,0 +1,370 @@
+{
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\eslint.config.mjs": {
+    "mtime": 1778526586.9097276,
+    "hash": "dfa1f5f6a7037bf39dc510f30b180002"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\graphify_pipeline.py": {
+    "mtime": 1779389663.8576517,
+    "hash": "9c0224a6d471e35cf38643ca7a4952d0"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\next-env.d.ts": {
+    "mtime": 1779385563.412722,
+    "hash": "2a74d3909800ca5467fa83b0ab4a4890"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\next.config.ts": {
+    "mtime": 1779380165.0966547,
+    "hash": "987de589f69855491e0955cd43e2a175"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\postcss.config.mjs": {
+    "mtime": 1778526586.9561615,
+    "hash": "239f3ebf717465dc636818a1a619398d"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\analytics_dashboard.py": {
+    "mtime": 1779430603.989237,
+    "hash": "81dbd3c2d8803f26f0211d091a1a167e"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\distribute.py": {
+    "mtime": 1779429116.7336981,
+    "hash": "5173fdea8d5b42a7df08891d282c2910"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\gsc_tracker.py": {
+    "mtime": 1779427086.2681744,
+    "hash": "6d95b06bbbd9a55527f655637df44159"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\llm_engine.py": {
+    "mtime": 1779425692.0588746,
+    "hash": "8753dedc517713228e47f2b158410c54"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\newsletter.py": {
+    "mtime": 1779429118.2875755,
+    "hash": "d3123eaaf72e07c1fabaaa6c8695defc"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\pipeline.py": {
+    "mtime": 1779427813.2502,
+    "hash": "d1786b9adecb771d8c98182840388aa3"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\safety_layer.py": {
+    "mtime": 1779425683.9510205,
+    "hash": "1721af53384ff6818861769117cd685f"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\scraper.py": {
+    "mtime": 1779424813.6331737,
+    "hash": "99c9753e893c00ab0701eff986a472bc"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\social_pipeline.py": {
+    "mtime": 1778533116.776374,
+    "hash": "7b25af70f1871656074dbfdd89d93334"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\middleware.ts": {
+    "mtime": 1779380159.5935955,
+    "hash": "e34c3f3ae085ad2d11bcb81575186f61"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\layout.tsx": {
+    "mtime": 1779427065.988047,
+    "hash": "eac07bc722305d829693111b8475d44e"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\not-found.tsx": {
+    "mtime": 1778765872.3157315,
+    "hash": "4ee27d7e05f71d896fd3d4ae9d83e55a"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\page.tsx": {
+    "mtime": 1779426619.7601542,
+    "hash": "f9a5ade63964ba8f689d975daeb274ed"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\sitemap.ts": {
+    "mtime": 1778765927.0519643,
+    "hash": "507b60f81f163cd285dd2d0a633cf07d"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\about\\page.tsx": {
+    "mtime": 1778769421.902958,
+    "hash": "3522c7dd253f5d8180d1221e350ed772"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\admin\\dashboard\\page.tsx": {
+    "mtime": 1778533462.3639183,
+    "hash": "e62ab8f77b67b9fea08af41325bf8597"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\admin\\login\\page.tsx": {
+    "mtime": 1778526947.200352,
+    "hash": "1c1c34312377db1267b5f51ce2a338dd"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\admin\\review\\page.tsx": {
+    "mtime": 1778766070.8928275,
+    "hash": "3899d3cae23ce6d0328a7c44ea5caf96"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\api\\post-news\\route.ts": {
+    "mtime": 1779380188.4776018,
+    "hash": "40173070788b3fe2e7bbdb6fa39c6ec5"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\article\\[id]\\page.tsx": {
+    "mtime": 1779427140.403375,
+    "hash": "5bc877bddc997b7f01f79c5f08acd073"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\category\\[slug]\\page.tsx": {
+    "mtime": 1779426666.51948,
+    "hash": "78aeb283ba5d6facf9bd03b3de5fc2ee"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\contact\\page.tsx": {
+    "mtime": 1778767364.3460803,
+    "hash": "fa8b7fb2ae141e3361bf66431dd617c8"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\cookie-policy\\page.tsx": {
+    "mtime": 1778767359.1135104,
+    "hash": "84c947f025c39efe0978223cf2247d99"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\data-request\\page.tsx": {
+    "mtime": 1778765875.311175,
+    "hash": "8d688be4816fb4e26111f241729bb741"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\dmca\\page.tsx": {
+    "mtime": 1778769427.7219353,
+    "hash": "10ebe8685538f7168b24c55ab3429061"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\dmca\\form\\page.tsx": {
+    "mtime": 1778765869.9182777,
+    "hash": "2ef258b850a3cdb3c2a4ca8a1521a34c"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\editorial-log\\page.tsx": {
+    "mtime": 1779429587.0162544,
+    "hash": "464b435c82d7400fcdb751b9ab5149f2"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\fact-checking\\page.tsx": {
+    "mtime": 1779429600.622166,
+    "hash": "d8dad412f980354770fb8ad2ea95bd13"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\premium\\page.tsx": {
+    "mtime": 1779429024.8711197,
+    "hash": "d77ac7a3256f2684b97375d00f5f7e68"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\privacy\\page.tsx": {
+    "mtime": 1778530044.2988155,
+    "hash": "e64ca650f1112657e6ec8ecec7a81a95"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\privacy-policy\\page.tsx": {
+    "mtime": 1778769425.196375,
+    "hash": "25c087de5dbcc3188b8da85bc0d7e7b9"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\quiz\\[id]\\page.tsx": {
+    "mtime": 1779385870.039416,
+    "hash": "321d265b22a27cc4279a84ce9c17e99b"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\quiz\\[id]\\QuizClient.tsx": {
+    "mtime": 1779385809.3897736,
+    "hash": "38aa5b3e367a208d101271b338cb6f89"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\quizzes\\page.tsx": {
+    "mtime": 1778777341.227702,
+    "hash": "994b00d124a1f370b8b05947b6dea71b"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\rss.xml\\route.ts": {
+    "mtime": 1779426681.9840271,
+    "hash": "bbd8853e6259377a94deb3bb8356093a"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\search\\page.tsx": {
+    "mtime": 1779426675.3053348,
+    "hash": "086384b16c21f3723d18fa1d74103a5e"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\submit-tip\\page.tsx": {
+    "mtime": 1778775717.190761,
+    "hash": "0f707c964cfd2e0cd3b80c64ff1f6397"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\terms\\page.tsx": {
+    "mtime": 1778530057.2785127,
+    "hash": "434870f9b67a91e07e9e88d1ebca87fe"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\app\\terms-of-service\\page.tsx": {
+    "mtime": 1778767353.1889682,
+    "hash": "c6fbbafe7dbf0340de69992fa555518c"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\AdSenseBaseScript.tsx": {
+    "mtime": 1778758562.9265666,
+    "hash": "78e5c987b201ad36a25f95501bb53418"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\AdSlot.tsx": {
+    "mtime": 1779428991.5115252,
+    "hash": "0ad5fe4209bfdcf3dd5c6ea1600dc9d2"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\BottomNav.tsx": {
+    "mtime": 1778703160.0442116,
+    "hash": "9d4127210e2a5eb32b2a6a38e28a9c81"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\BreakingNewsTicker.tsx": {
+    "mtime": 1778740727.110044,
+    "hash": "d96bba05438b4f46a8d7047284d06f73"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\ConditionalAds.tsx": {
+    "mtime": 1779428956.472363,
+    "hash": "2e17105ab01890e6d2728602e8c7faff"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\CookieConsent.tsx": {
+    "mtime": 1778765696.911169,
+    "hash": "0a47fda2ff6421f96973ecc1a1791e21"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\CynicalTLDR.tsx": {
+    "mtime": 1778704624.1383946,
+    "hash": "f455bb48272ef4088d3d92e6009d63c5"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\Footer.tsx": {
+    "mtime": 1779429608.1601405,
+    "hash": "af78c87a239b7f2aac03921b5db1036c"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\GiscusComments.tsx": {
+    "mtime": 1778766199.2427962,
+    "hash": "b4eb55e968488dbae309d5b6fbb44163"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\Header.tsx": {
+    "mtime": 1778740730.7835748,
+    "hash": "c57bccd930cac04394b3584c2a39261f"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\Navbar.tsx": {
+    "mtime": 1779429069.1756318,
+    "hash": "742a35018e8e4b23ebae3a377202f604"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\Reactions.tsx": {
+    "mtime": 1778704626.376976,
+    "hash": "34b2f2a6d4cb05657f4a0d7b51bdc027"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\ReviewedByBadge.tsx": {
+    "mtime": 1778766073.7228155,
+    "hash": "e07c96813672ad3e9c709157f916a2e7"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\SkeletonLoader.tsx": {
+    "mtime": 1778703162.3756013,
+    "hash": "0a0488de7faa74e9588049fd3c1f7f6a"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\components\\ViralGrid.tsx": {
+    "mtime": 1778703322.9790044,
+    "hash": "312fbee2ae5ba56369bf0026bac66f66"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\hooks\\useAdReady.ts": {
+    "mtime": 1778758549.7906525,
+    "hash": "f1f7a617d02fefe3191f100a9aa69ab4"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\hooks\\useCookieConsent.ts": {
+    "mtime": 1779428763.3212414,
+    "hash": "db4f2bf467952d21c1233955a91a39b1"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\lib\\affiliates.ts": {
+    "mtime": 1779429005.73788,
+    "hash": "2ff8fda509e3767b603e35af1445336c"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\lib\\seo.ts": {
+    "mtime": 1779427076.3440866,
+    "hash": "130a3b5565b0046f5d42bc2d3e35ae21"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\src\\lib\\supabase.ts": {
+    "mtime": 1779380153.074707,
+    "hash": "ec145485aed87a15baea9f5549a0f8b3"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\supabase\\migrations\\0001_initial_schema.sql": {
+    "mtime": 1778526791.6561818,
+    "hash": "8f7a582882aebefcfc5bf0fc8193b3a1"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\supabase\\migrations\\0002_reactions_table.sql": {
+    "mtime": 1778532697.900939,
+    "hash": "82ce1357d5c36caca83d2f5b1ef8f4a2"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\supabase\\migrations\\0003_social_assets.sql": {
+    "mtime": 1778533082.9997282,
+    "hash": "3ff6eca75e94dda158fe7ccf58d21e6e"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\supabase\\migrations\\0004_quiz_engine.sql": {
+    "mtime": 1778568992.156677,
+    "hash": "e28d3a30217faaf4ef02a730967be0c8"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\supabase\\migrations\\0004_tips_table.sql": {
+    "mtime": 1778533395.8442154,
+    "hash": "c068bf4d33176fcbb3dee06b18818343"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\supabase\\migrations\\0005_human_review.sql": {
+    "mtime": 1778766068.233418,
+    "hash": "fdaae36f7a94c3432fcb8e2b27cb0447"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\supabase\\migrations\\0006_content_hash.sql": {
+    "mtime": 1779380163.4190986,
+    "hash": "0e373bb9d658c6be1881180388b40f70"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\supabase\\migrations\\0007_gsc_data.sql": {
+    "mtime": 1779427089.3956132,
+    "hash": "73601ee6be5701673f2a472483f3b0b1"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\90-DAY-LAUNCH-PLAN.md": {
+    "mtime": 1779430965.8470929,
+    "hash": "d36ee8a876dcf1eb9fc980a0df13f0f1"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\ADSENSE_READINESS.md": {
+    "mtime": 1779429622.5595407,
+    "hash": "033c5a85a366177602d2d7ab4dae2ed3"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\AGENTS.md": {
+    "mtime": 1778526742.3789482,
+    "hash": "9e09241799026ac05be315a2f0b50055"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\CLAUDE.md": {
+    "mtime": 1778526742.3794851,
+    "hash": "5c27369b226fcf2be8a6cfe52224e767"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\HIRING_JDS.md": {
+    "mtime": 1779430591.1275496,
+    "hash": "9ba0f1b3abcbeb8485409612801e47fe"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\LAUNCH_CHECKLIST.md": {
+    "mtime": 1779430971.627304,
+    "hash": "746e31df90be4006673760c57bd138fb"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\newsletter_2026-05-22.html": {
+    "mtime": 1779427858.7251208,
+    "hash": "b8e01cf1d5d4b991caa3c530f2c08ac4"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\OPERATIONS.md": {
+    "mtime": 1779430380.8426173,
+    "hash": "6857b454b9ca42c19a5da911eaaafb83"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\README.md": {
+    "mtime": 1778526586.878095,
+    "hash": "f15aaa42d5d299d091b1171097ea56ad"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\requirements.txt": {
+    "mtime": 1779427090.931346,
+    "hash": "185c959ce3e1e1f6125685a648dbefe6"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\VIDEO_PIPELINE.md": {
+    "mtime": 1779430615.1742227,
+    "hash": "84940263a83a479b0dc8fea4ec04809a"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\public\\ads.txt": {
+    "mtime": 1779380161.0611157,
+    "hash": "6b86fc84a53a4d97f38838e550c9a1a5"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\public\\robots.txt": {
+    "mtime": 1778765924.1886837,
+    "hash": "af5b2d2fd2cd9a14e413d322021c5396"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\scripts\\requirements.txt": {
+    "mtime": 1778533137.6894426,
+    "hash": "59449475c996c1a6e7ac93c55c241711"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\public\\default-og.jpg": {
+    "mtime": 1779426698.5632591,
+    "hash": "8fa5c15af13423f452f7b94f05bd3cba"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\public\\file.svg": {
+    "mtime": 1778526586.9669442,
+    "hash": "d09f95206c3fa0bb9bd9fefabfd0ea71"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\public\\globe.svg": {
+    "mtime": 1778526586.9854019,
+    "hash": "2aaafa6a49b6563925fe440891e32717"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\public\\next.svg": {
+    "mtime": 1778526587.003232,
+    "hash": "8e061864f388b47f33a1c3780831193e"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\public\\vercel.svg": {
+    "mtime": 1778526587.0195735,
+    "hash": "c0af2f507b369b085b35ef4bbe3bcf1e"
+  },
+  "C:\\Users\\NOEL FERNANDES\\Downloads\\bimber_v9.2.4\\truthworldnews\\public\\window.svg": {
+    "mtime": 1778526587.0316203,
+    "hash": "a2760511c65806022ad20adf74370ff3"
+  }
+}

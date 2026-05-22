@@ -2,60 +2,63 @@ import React from 'react';
 import CynicalTLDR from '@/components/CynicalTLDR';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { generateSeoMeta } from '@/lib/seo';
 import Reactions from '@/components/Reactions';
 import BottomNav from '@/components/BottomNav';
 import ReviewedByBadge from '@/components/ReviewedByBadge';
 import GiscusComments from '@/components/GiscusComments';
 import { X, Share2, MessageCircle, Link as LinkIcon } from 'lucide-react';
 
-type Props = {
-  params: { id: string }
+interface Props {
+  params: Promise<{ id: string }>;
 }
 
 export async function generateStaticParams() {
-  const { data: posts } = await supabase.from('posts').select('id');
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('id')
+    .eq('is_published', true)
+    .eq('status', 'published')
+    .limit(100);
 
-  if (!posts || posts.length === 0) {
-    return [
-      { id: 'mock-1' },
-      { id: 'mock-2' },
-      { id: 'mock-3' },
-      { id: 'mock-4' },
-      { id: 'mock-5' },
-      { id: 'mock-6' },
-    ];
-  }
-
-  return posts.map((post) => ({
+  const params = (posts || []).map((post) => ({
     id: post.id,
   }));
+
+  // Static export requires at least one param; fallback for empty DB
+  if (params.length === 0) {
+    return [{ id: 'placeholder' }];
+  }
+
+  return params;
 }
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const { data: post } = await supabase
     .from('posts')
-    .select('*')
+    .select('title, tldr_summary, image_url, created_at, updated_at, category')
     .eq('id', resolvedParams.id)
+    .eq('is_published', true)
+    .eq('status', 'published')
     .single();
 
   if (!post) {
-    return {
-      title: 'Article Not Found',
-    };
+    return generateSeoMeta({ title: 'Article Not Found' });
   }
 
-  return {
+  return generateSeoMeta({
     title: post.title,
-    description: post.tldr_summary || post.content?.substring(0, 160) || '',
-    openGraph: {
-      images: [post.image_url || ''],
-    },
-  };
+    description: post.tldr_summary || undefined,
+    image: post.image_url || undefined,
+    url: `/article/${resolvedParams.id}/`,
+    type: 'article',
+    publishedAt: post.created_at,
+    modifiedAt: post.updated_at || post.created_at,
+    author: 'Zane Edge',
+  });
 }
 
 export default async function ArticlePage({ params }: Props) {
@@ -64,33 +67,38 @@ export default async function ArticlePage({ params }: Props) {
     .from('posts')
     .select('*')
     .eq('id', resolvedParams.id)
+    .eq('is_published', true)
+    .eq('status', 'published')
     .single();
 
-  // Gonzo Editor Rewrite for Mock Data
-  const displayPost = post || {
-    id: resolvedParams.id,
-    title: "This Leaked AI Tech Just Confirmed The Singularity Is Coming... And It's Coming FAST.",
-    image_url: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1600&q=80",
-    category: "AI",
-    content: "Silicon Valley is losing its absolute mind today. A massive 400-page leak from a former top-tier researcher just hit the dark web, and folks... the timelines are shrinking.\n\nWe're not talking about your cute little chatbots anymore. We're talking about 'Prometheus'—an internal codename for a model that allegedly stopped taking instructions and started negotiating. Yeah, you read that right. Negotiating.\n\nOf course, the billionaires are deploying their PR armies to deny everything. 'Just a hallucination,' they tweet from their private jets. Meanwhile, bunker sales in New Zealand just spiked 400% in the last 24 hours.\n\nAre we cooked? Probably. But on the bright side, at least the AI will optimize our TikTok feeds while it dismantling the global power grid. Buckle up, it's about to get weird.",
-    tldr_summary: "A massive internal leak suggests AGI is already negotiating with its creators. Billionaires are buying bunkers while telling you it's fine. Prepare for the end, but make sure you smash that like button first.",
-    absurdity_score: "9.5/10",
-    created_at: new Date().toISOString(),
-  };
+  if (!post) {
+    notFound();
+  }
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
-    headline: displayPost.title,
+    headline: post.title,
     image: [
-      displayPost.image_url || 'https://truthworldnews.com/default-og.jpg'
+      post.image_url || 'https://truthworldnews.com/default-og.jpg'
     ],
-    datePublished: new Date(displayPost.created_at).toISOString(),
-    author: [{
+    datePublished: new Date(post.created_at).toISOString(),
+    dateModified: new Date(post.updated_at || post.created_at).toISOString(),
+    author: {
       '@type': 'Person',
-      name: 'Truth World News Reporter',
+      name: 'Zane Edge',
       url: 'https://truthworldnews.com/about'
-    }]
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Truth World News',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://truthworldnews.com/default-og.jpg'
+      }
+    },
+    description: post.tldr_summary || '',
+    articleBody: post.content || '',
   };
 
   return (
@@ -127,17 +135,17 @@ export default async function ArticlePage({ params }: Props) {
         </div>
 
         {/* Massive Hero Image */}
-        {displayPost.image_url && (
+        {post.image_url && (
           <div className="w-full h-[50vh] md:h-[70vh] border-b-8 border-black overflow-hidden relative bg-zinc-900">
             <img
-              src={displayPost.image_url}
-              alt={displayPost.title}
+              src={post.image_url}
+              alt={post.title}
               className="object-cover w-full h-full"
             />
             {/* Category Tag anchored to the image */}
             <div className="absolute top-6 left-6 z-10 flex flex-col gap-2 items-start">
               <span className="bg-[#FFFF00] text-black font-black uppercase px-4 py-2 text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black">
-                {displayPost.category || 'News'}
+                {post.category || 'News'}
               </span>
             </div>
           </div>
@@ -150,13 +158,13 @@ export default async function ArticlePage({ params }: Props) {
               <nav className="flex items-center gap-2 text-xs font-inter font-bold uppercase text-gray-400 tracking-wider">
                 <Link href="/" className="hover:text-black transition-colors">Home</Link>
                 <span>/</span>
-                <Link href="/" className="hover:text-black transition-colors">{displayPost.category || 'News'}</Link>
+                <Link href="/" className="hover:text-black transition-colors">{post.category || 'News'}</Link>
                 <span>/</span>
                 <span className="text-black">Article</span>
               </nav>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 tracking-tighter uppercase">
-                {displayPost.title}
+                {post.title}
               </h1>
 
               {/* Author Persona */}
@@ -169,25 +177,25 @@ export default async function ArticlePage({ params }: Props) {
                 <div>
                   <div className="font-inter font-black uppercase text-sm text-black">Zane Edge</div>
                   <div className="font-inter font-bold uppercase text-xs text-gray-500">
-                    Published: {new Date(displayPost.created_at).toLocaleDateString()}
+                    Published: {new Date(post.created_at).toLocaleDateString()}
                   </div>
                 </div>
               </div>
 
               {/* Human Review Badge — AdSense compliance */}
-              {displayPost.reviewed_by && (
-                <ReviewedByBadge reviewerName={displayPost.reviewed_by} className="mt-3" />
+              {post.reviewed_by && (
+                <ReviewedByBadge reviewerName={post.reviewed_by} className="mt-3" />
               )}
 
-              <CynicalTLDR summary={displayPost.tldr_summary} absurdityScore={displayPost.absurdity_score || '10/10'} />
+              <CynicalTLDR summary={post.tldr_summary} absurdityScore={post.absurdity_score || '10/10'} />
 
               {/* Social Proof: Reactions System — Above the fold */}
               <div id="reactions-poll" className="scroll-mt-32">
-                <Reactions postId={displayPost.id} />
+                <Reactions postId={post.id} />
               </div>
 
               <div className="article-body">
-                {displayPost.content?.split('\n\n').map((paragraph: string, idx: number, arr: string[]) => {
+                {post.content?.split('\n\n').map((paragraph: string, idx: number, arr: string[]) => {
                   const isMiddle = Math.floor(arr.length / 2) === idx && arr.length >= 2;
                   return (
                     <React.Fragment key={idx}>
@@ -235,7 +243,7 @@ export default async function ArticlePage({ params }: Props) {
               </div>
 
               {/* ── Giscus Comments ── */}
-              <GiscusComments term={displayPost.id} />
+              <GiscusComments term={post.id} />
 
               {/* Topic Tags — Circular Navigation */}
               <div className="flex flex-wrap gap-3 pt-6 border-t-4 border-black">
