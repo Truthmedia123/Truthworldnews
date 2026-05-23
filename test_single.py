@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test one NVIDIA model at a time with 30-second timeout."""
+"""Retry failed NVIDIA models with 120s timeout."""
 
 import os, requests, sys
 from openai import OpenAI
@@ -15,7 +15,7 @@ client = OpenAI(base_url=BASE, api_key=NVIDIA_KEY)
 TEST_PROMPT = "Write a sarcastic 100-word headline and subheadline about AI hype."
 
 def test_kimi():
-    print("\nTESTING kimi-k2.6 (requests, 30s timeout)...")
+    print("\nTESTING kimi-k2.6 (requests, 120s timeout)...")
     try:
         r = requests.post(
             f"{BASE}/chat/completions",
@@ -25,7 +25,7 @@ def test_kimi():
                 "messages": [{"role": "user", "content": TEST_PROMPT}],
                 "max_tokens": 200, "temperature": 0.85, "stream": False
             },
-            timeout=30
+            timeout=120
         )
         data = r.json()
         text = data['choices'][0]['message']['content']
@@ -36,13 +36,13 @@ def test_kimi():
         return False
 
 def test_nemotron():
-    print("\nTESTING nemotron-3-super (OpenAI client, 30s timeout)...")
+    print("\nTESTING nemotron-3-super (OpenAI client, 120s timeout)...")
     try:
         comp = client.chat.completions.create(
             model="nvidia/nemotron-3-super-120b-a12b",
             messages=[{"role": "user", "content": TEST_PROMPT}],
             max_tokens=200, temperature=0.85, stream=False,
-            timeout=30
+            timeout=120
         )
         text = comp.choices[0].message.content
         print(f"PASS — {len(text)} chars\n{text[:200]}...")
@@ -52,13 +52,13 @@ def test_nemotron():
         return False
 
 def test_deepseek():
-    print("\nTESTING deepseek-v4-flash (OpenAI client, 30s timeout)...")
+    print("\nTESTING deepseek-v4-flash (OpenAI client, 120s timeout)...")
     try:
         comp = client.chat.completions.create(
             model="deepseek-ai/deepseek-v4-flash",
             messages=[{"role": "user", "content": TEST_PROMPT}],
             max_tokens=200, temperature=0.85, stream=False,
-            timeout=30
+            timeout=120
         )
         text = comp.choices[0].message.content
         print(f"PASS — {len(text)} chars\n{text[:200]}...")
@@ -73,18 +73,6 @@ if __name__ == "__main__":
         "nemotron-3-super": test_nemotron(),
         "deepseek-v4-flash": test_deepseek()
     }
-    
     print("\n" + "="*50)
-    print("SUMMARY")
-    print("="*50)
     for model, ok in results.items():
-        status = "WORKS" if ok else "BROKEN"
-        print(f"{status}: {model}")
-    
-    working = [m for m, ok in results.items() if ok]
-    if len(working) >= 2:
-        print(f"\n{len(working)} models work. Ready to deploy.")
-    elif len(working) == 1:
-        print(f"\nOnly 1 model works. Add legacy API keys as backup.")
-    else:
-        print(f"\nNo models work. Check NVIDIA API key at https://build.nvidia.com")
+        print(f"{'PASS' if ok else 'FAIL'}: {model}")

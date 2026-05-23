@@ -121,7 +121,7 @@ def kimi_k26(system: str, user: str) -> Optional[str]:
             f"{NVIDIA_BASE_URL}/chat/completions",
             headers=headers,
             json=payload,
-            timeout=120
+            timeout=180
         )
 
         data = response.json()
@@ -154,7 +154,8 @@ def nemotron_super(system: str, user: str) -> Optional[str]:
                 },
                 "reasoning_budget": 1200
             },
-            stream=False
+            stream=False,
+            timeout=120
         )
 
         return completion.choices[0].message.content
@@ -186,7 +187,8 @@ def deepseek_flash(system: str, user: str) -> Optional[str]:
                     "reasoning_effort": "high"
                 }
             },
-            stream=False
+            stream=False,
+            timeout=120
         )
 
         return completion.choices[0].message.content
@@ -220,7 +222,7 @@ def deepseek_flash_requests(system: str, user: str) -> Optional[str]:
             f"{NVIDIA_BASE_URL}/chat/completions",
             headers=headers,
             json=payload,
-            timeout=120
+            timeout=180
         )
 
         data = response.json()
