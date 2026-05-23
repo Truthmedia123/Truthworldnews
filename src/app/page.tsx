@@ -1,28 +1,50 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import BreakingNewsTicker from '@/components/BreakingNewsTicker';
 import Link from 'next/link';
-import { Flame, ArrowRight, Play } from 'lucide-react';
+import { Flame, ArrowRight } from 'lucide-react';
 
-export const revalidate = 3600; // ISR: regenerate every hour
+export default function Home() {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function Home() {
-  // Fetch published posts from Supabase
-  const { data: posts, error } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('is_published', true)
-    .eq('status', 'published')
-    .order('created_at', { ascending: false })
-    .limit(20);
+  useEffect(() => {
+    async function fetchArticles() {
+      const { data, error } = await supabase
+        .from('news_articles')
+        .select('*')
+        .eq('status', 'published')
+        .order('published_at', { ascending: false })
+        .limit(20);
 
-  if (error) {
-    console.error('Failed to fetch posts:', error);
+      if (error) {
+        console.error('Failed to fetch articles:', error);
+      } else {
+        setPosts(data || []);
+      }
+      setLoading(false);
+    }
+
+    fetchArticles();
+  }, []);
+
+  const headlines = posts.slice(0, 5).map(p => p.title);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white text-black">
+        <div className="max-w-[1280px] mx-auto px-4 py-20 text-center">
+          <Flame className="w-16 h-16 text-red-600 mx-auto mb-6 animate-pulse" />
+          <h1 className="text-4xl font-black mb-4 uppercase tracking-tighter">Truth World News</h1>
+          <p className="text-xl text-gray-500">Loading articles...</p>
+        </div>
+      </main>
+    );
   }
 
-  const headlines = posts?.slice(0, 5).map(p => p.title) || [];
-
-  // If no posts yet, show a "coming soon" state instead of mock data
-  if (!posts || posts.length === 0) {
+  if (posts.length === 0) {
     return (
       <main className="min-h-screen bg-white text-black">
         <div className="max-w-[1280px] mx-auto px-4 py-20 text-center">
