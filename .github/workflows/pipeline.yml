@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Verify commit
+      - name: Nuclear clean checkout
         run: |
+          rm -rf .git
+          git init
+          git remote add origin https://github.com/Truthmedia123/Truthworldnews.git
+          git fetch origin main
+          git reset --hard origin/main
           git log -1 --oneline
           echo "Commit hash: $(git rev-parse HEAD)"
 
