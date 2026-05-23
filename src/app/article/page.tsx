@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
-export default function ArticlePage() {
+function ArticleContent() {
   const searchParams = useSearchParams()
   const articleId = searchParams.get('id')
 
@@ -109,5 +109,20 @@ export default function ArticlePage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function ArticlePage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-white text-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-black border-t-[#FFFF00] animate-spin rounded-full mx-auto mb-4" />
+          <p className="font-black uppercase">Loading article...</p>
+        </div>
+      </main>
+    }>
+      <ArticleContent />
+    </Suspense>
   )
 }
