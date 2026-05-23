@@ -1,78 +1,65 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import CynicalTLDR from '@/components/CynicalTLDR';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { generateSeoMeta } from '@/lib/seo';
 import Reactions from '@/components/Reactions';
 import BottomNav from '@/components/BottomNav';
 import ReviewedByBadge from '@/components/ReviewedByBadge';
 import GiscusComments from '@/components/GiscusComments';
 import { X, Share2, MessageCircle, Link as LinkIcon } from 'lucide-react';
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+export default function ArticlePage() {
+  const params = useParams();
+  const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-export async function generateStaticParams() {
-  const { data: posts } = await supabase
-    .from('posts')
-    .select('id')
-    .eq('is_published', true)
-    .eq('status', 'published')
-    .limit(100);
+  useEffect(() => {
+    async function fetchArticle() {
+      const { data, error } = await supabase
+        .from('news_articles')
+        .select('*')
+        .eq('id', params.id)
+        .single();
 
-  const params = (posts || []).map((post) => ({
-    id: post.id,
-  }));
+      if (error) {
+        console.error('Error fetching article:', error);
+      } else {
+        setPost(data);
+      }
+      setLoading(false);
+    }
 
-  // Static export requires at least one param; fallback for empty DB
-  if (params.length === 0) {
-    return [{ id: 'placeholder' }];
+    if (params.id) {
+      fetchArticle();
+    }
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white text-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-black border-t-[#FFFF00] animate-spin rounded-full mx-auto mb-4" />
+          <p className="font-black uppercase">Loading article...</p>
+        </div>
+      </main>
+    );
   }
 
-  return params;
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = await params;
-  const { data: post } = await supabase
-    .from('posts')
-    .select('title, tldr_summary, image_url, created_at, updated_at, category')
-    .eq('id', resolvedParams.id)
-    .eq('is_published', true)
-    .eq('status', 'published')
-    .single();
-
   if (!post) {
-    return generateSeoMeta({ title: 'Article Not Found' });
-  }
-
-  return generateSeoMeta({
-    title: post.title,
-    description: post.tldr_summary || undefined,
-    image: post.image_url || undefined,
-    url: `/article/${resolvedParams.id}/`,
-    type: 'article',
-    publishedAt: post.created_at,
-    modifiedAt: post.updated_at || post.created_at,
-    author: 'Zane Edge',
-  });
-}
-
-export default async function ArticlePage({ params }: Props) {
-  const resolvedParams = await params;
-  const { data: post } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('id', resolvedParams.id)
-    .eq('is_published', true)
-    .eq('status', 'published')
-    .single();
-
-  if (!post) {
-    notFound();
+    return (
+      <main className="min-h-screen bg-white text-black flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-black mb-4">Article Not Found</h1>
+          <p className="text-gray-500">This article may have been removed or doesn't exist.</p>
+          <Link href="/" className="inline-block mt-6 bg-black text-white font-black uppercase px-6 py-3 border-2 border-black hover:bg-[#FFFF00] hover:text-black transition-colors">
+            Back to Home
+          </Link>
+        </div>
+      </main>
+    );
   }
 
   const jsonLd = {
