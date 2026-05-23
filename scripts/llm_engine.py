@@ -11,6 +11,12 @@ import re
 import requests
 from typing import Optional, Dict, List
 
+try:
+    from supabase import create_client, Client
+    SUPABASE_AVAILABLE = True
+except ImportError:
+    SUPABASE_AVAILABLE = False
+
 # Try to import OpenAI client, fallback to requests
 try:
     from openai import OpenAI
@@ -341,25 +347,46 @@ def get_image_for_story(story: Dict) -> str:
     return f"https://source.unsplash.com/1200x630/?{keywords}"
 
 def post_to_api(article: Dict) -> bool:
-    API_ENDPOINT = os.getenv("API_ENDPOINT", "http://localhost:3000/api/post-news")
-    API_SECRET_KEY = os.getenv("API_SECRET_KEY")
-    if not API_SECRET_KEY:
-        print("⚠️ API_SECRET_KEY missing")
+    """Insert article directly into Supabase — no HTTP API needed."""
+    SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+    SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
+
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        print("⚠️ SUPABASE_URL or SUPABASE_SERVICE_KEY missing")
         return False
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {API_SECRET_KEY}"
-    }
+
+    if not SUPABASE_AVAILABLE:
+        print("⚠️ supabase package not installed")
+        return False
+
     try:
-        res = requests.post(API_ENDPOINT, json=article, headers=headers, timeout=30)
-        if res.status_code == 200:
-            print("✅ Article posted to API")
-            return True
-        else:
-            print(f"❌ API error {res.status_code}: {res.text}")
-            return False
+        sb: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+        result = sb.table("news_articles").insert({
+            "title": article["title"],
+            "content": article["content"],
+            "hype_meter": article.get("hype_meter", "5/10"),
+            "tldr_summary": article.get("tldr_summary", ""),
+            "model_used": article.get("model_used", "unknown"),
+            "sources": article.get("sources", "[]"),
+            "content_hash": article.get("content_hash", ""),
+            "category": article.get("category", "News"),
+            "image_url": article.get("image_url", ""),
+            "is_rumor": article.get("is_rumor", False),
+            "safety_score": article.get("safety_score", 0),
+            "status": "published",
+            "published_at": "now()"
+        }).execute()
+
+        print(f"✅ Article inserted to Supabase: {article['title'][:60]}...")
+        return True
+
     except Exception as e:
-        print(f"❌ API connection failed: {e}")
+        print(f"❌ Supabase insert failed: {e}")
+        backup_file = f"article_backup_{article.get('content_hash', 'unknown')[:8]}.json"
+        with open(backup_file, "w", encoding="utf-8") as f:
+            json.dump(article, f, indent=2, ensure_ascii=False)
+        print(f"💾 Backup saved: {backup_file}")
         return False
 
 def main():
