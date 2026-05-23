@@ -84,7 +84,7 @@ export default function Home() {
           {/* Left 60% — Main Viral Card */}
           <div className="lg:w-[60%]">
             <Link
-              href={`/article/${mainViral.id}`}
+              href={`/article?id=${mainViral.id}`}
               className="group relative flex flex-col overflow-hidden border-4 border-black hover:border-[#FFFF00] transition-colors h-full"
             >
               <div className="bg-zinc-900 w-full relative aspect-video min-h-[350px] md:min-h-[480px]">
@@ -118,7 +118,7 @@ export default function Home() {
             {secondaryViral.map((article) => (
               <Link
                 key={article.id}
-                href={`/article/${article.id}`}
+                href={`/article?id=${article.id}`}
                 className="group flex gap-3 border-4 border-black hover:border-[#FFFF00] transition-colors p-0 overflow-hidden flex-1"
               >
                 <div className="w-[40%] min-w-[120px] relative overflow-hidden">
@@ -145,7 +145,7 @@ export default function Home() {
             {posts.slice(4, 8).map((article: any) => (
               <Link
                 key={article.id}
-                href={`/article/${article.id}`}
+                href={`/article?id=${article.id}`}
                 className="group flex flex-col border-4 border-black hover:border-[#FFFF00] transition-colors overflow-hidden"
               >
                 <div className="aspect-[4/3] relative overflow-hidden bg-zinc-200">
@@ -183,7 +183,7 @@ export default function Home() {
               {techGrid[0] && (
                 <div className="md:w-1/2">
                   <Link
-                    href={`/article/${techGrid[0].id}`}
+                    href={`/article?id=${techGrid[0].id}`}
                     className="group relative flex flex-col overflow-hidden border-4 border-black hover:border-[#FFFF00] transition-colors h-full"
                   >
                     <div className="bg-zinc-900 w-full relative aspect-video min-h-[300px]">
@@ -212,7 +212,7 @@ export default function Home() {
                 {techGrid.slice(1, 5).map((article: any) => (
                   <Link
                     key={article.id}
-                    href={`/article/${article.id}`}
+                    href={`/article?id=${article.id}`}
                     className="group flex flex-col border-4 border-black hover:border-[#FFFF00] transition-colors overflow-hidden bg-white"
                   >
                     <div className="aspect-[4/3] relative overflow-hidden bg-zinc-200">
@@ -262,7 +262,7 @@ export default function Home() {
                   {politicsPosts.slice(1, 5).map((article: any) => (
                     <Link
                       key={article.id}
-                      href={`/article/${article.id}`}
+                      href={`/article?id=${article.id}`}
                       className="group flex flex-col border-4 border-black hover:border-[#FFFF00] transition-colors overflow-hidden bg-gray-50"
                     >
                       <div className="aspect-[4/3] relative overflow-hidden bg-zinc-200">
@@ -281,7 +281,7 @@ export default function Home() {
                 </div>
                 <div className="md:w-1/2 order-1 md:order-2">
                   <Link
-                    href={`/article/${politicsPosts[0].id}`}
+                    href={`/article?id=${politicsPosts[0].id}`}
                     className="group relative flex flex-col overflow-hidden border-4 border-black hover:border-[#FFFF00] transition-colors h-full"
                   >
                     <div className="bg-zinc-900 w-full relative aspect-video min-h-[300px]">
@@ -337,7 +337,7 @@ export default function Home() {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="md:w-1/3">
                   <Link
-                    href={`/article/${featured.id}`}
+                    href={`/article?id=${featured.id}`}
                     className="group relative flex flex-col overflow-hidden border-4 border-black hover:border-[#FFFF00] transition-colors h-full"
                   >
                     <div className="bg-zinc-900 w-full relative aspect-[4/5] min-h-[350px]">
@@ -364,7 +364,7 @@ export default function Home() {
                   {grid.map((article: any) => (
                     <Link
                       key={article.id}
-                      href={`/article/${article.id}`}
+                      href={`/article?id=${article.id}`}
                       className="group flex flex-col border-4 border-black hover:border-[#FFFF00] transition-colors overflow-hidden bg-white"
                     >
                       <div className="aspect-[4/3] relative overflow-hidden bg-zinc-200">
@@ -399,7 +399,7 @@ export default function Home() {
           {latestNews.map((article: any) => (
             <Link
               key={article.id}
-              href={`/article/${article.id}`}
+              href={`/article?id=${article.id}`}
               className="group flex flex-col border-4 border-black hover:border-[#FFFF00] transition-colors overflow-hidden bg-white"
             >
               <div className="aspect-video relative overflow-hidden bg-zinc-200">
