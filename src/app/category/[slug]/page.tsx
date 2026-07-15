@@ -55,9 +55,7 @@ export default async function CategoryPage({ params }: Props) {
         <h1 className="text-4xl font-black mb-2 text-red-600 uppercase tracking-tighter">{category}</h1>
         <p className="text-gray-500 mb-8">All the {category.toLowerCase()} news worth caring about.</p>
         
-        {(!posts || posts.length === 0) ? (
-          <p className="text-gray-400">No articles in this category yet. Pipeline is running.</p>
-        ) : (
+        {(!posts || posts.length === 0) ? null : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post: any) => (
               <Link key={post.id} href={`/article/${post.id}`}>

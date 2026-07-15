@@ -53,9 +53,6 @@ export default function Home() {
           <p className="text-xl text-gray-500 mb-8">
             The cynical antidote to boring mainstream media.
           </p>
-          <p className="text-gray-400">
-            First articles loading soon. The pipeline is running.
-          </p>
         </div>
       </main>
     );
