@@ -1,48 +1,42 @@
 import { MetadataRoute } from 'next';
-import { supabase } from '@/lib/supabase';
+import { getPosts } from '@/lib/ghost';
 
-export const dynamic = 'force-static';
 export const revalidate = 3600;
+export const dynamic = 'force-static';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://truthworldnews.com';
 
-  let posts = null;
+  let posts: any[] = [];
   try {
-    const { data } = await supabase
-      .from('posts')
-      .select('id, created_at');
-    posts = data;
+    const res = await getPosts({ limit: 100 });
+    posts = res.posts;
   } catch (err) {
     console.error('Sitemap fetch error:', err);
   }
 
-  const articleEntries = posts && posts.length > 0
-    ? posts.map((post) => ({
-      url: `${baseUrl}/article/${post.id}`,
-      lastModified: new Date(post.created_at),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    }))
-    : [1, 2, 3, 4, 5, 6].map(i => ({
-      url: `${baseUrl}/article/mock-${i}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    }));
+  const articleEntries = posts.map((post) => ({
+    url: `${baseUrl}/article/${post.slug}`,
+    lastModified: new Date(post.updated_at || post.published_at || Date.now()),
+    changeFrequency: 'daily' as const,
+    priority: 0.8,
+  }));
 
-  // Static pages
-  const staticPages: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: 'always', priority: 1 },
-    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${baseUrl}/submit-tip`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.8 },
-    { url: `${baseUrl}/privacy-policy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
-    { url: `${baseUrl}/terms-of-service`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
-    { url: `${baseUrl}/dmca`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
-    { url: `${baseUrl}/cookie-policy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
-    { url: `${baseUrl}/quizzes`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+  const staticEntries = [
+    { url: baseUrl, lastModified: new Date(), changeFrequency: 'hourly' as const, priority: 1.0 },
+    { url: `${baseUrl}/search`, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.6 },
+    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
+    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
+    { url: `${baseUrl}/submit-tip`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
   ];
 
-  return [...staticPages, ...articleEntries];
+  const categories = ['ai', 'crypto', 'weird-tech', 'leaks', 'rants', 'investigations', 'news'];
+  const categoryEntries = categories.map((cat) => ({
+    url: `${baseUrl}/category/${cat}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticEntries, ...categoryEntries, ...articleEntries];
 }

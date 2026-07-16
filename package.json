@@ -6,14 +6,23 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate:content": "tsx scripts/migrate-supabase-to-ghost.ts",
+    "migrate:user-data": "tsx scripts/migrate-tips-reactions-to-postgres.ts",
+    "sync:search": "tsx scripts/sync-meilisearch.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.106.1",
     "lucide-react": "^1.14.0",
     "next": "16.2.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "@tryghost/content-api": "^1.11.20",
+    "@tryghost/admin-api": "^1.13.11",
+    "meilisearch": "^0.41.0",
+    "pg": "^8.13.1",
+    "jose": "^5.9.6",
+    "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -23,6 +32,10 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "tsx": "^4.19.2",
+    "@types/pg": "^8.11.10",
+    "@types/bcryptjs": "^2.4.6",
+    "@supabase/supabase-js": "^2.45.4"
   }
 }

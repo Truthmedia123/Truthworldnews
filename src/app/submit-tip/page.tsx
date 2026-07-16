@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 
 export default function SubmitTipPage() {
   const [title, setTitle] = useState('');
@@ -11,90 +10,94 @@ export default function SubmitTipPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !story) return;
-
     setStatus('submitting');
 
-    // Attempt Supabase insert
-    const { error } = await supabase.from('tips').insert([{ title, story }]);
-
-    if (error) {
-      // In dev environment without DB, simulate success
-      console.error(error);
-      setTimeout(() => setStatus('success'), 1000);
-    } else {
+    try {
+      const res = await fetch('/api/tip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, story }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Submission failed');
+      }
       setStatus('success');
+      setTitle('');
+      setStory('');
+    } catch (err: any) {
+      console.error('Tip submission error:', err);
+      setStatus('error');
     }
   };
 
-  if (status === 'success') {
-    return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div className="max-w-xl text-center border-8 border-[#FFFF00] p-12 bg-zinc-900 shadow-[12px_12px_0px_0px_#FFFF00]">
-          <h1 className="text-6xl font-inter font-black uppercase mb-6 text-[#FFFF00]">Tip Received</h1>
-          <p className="text-xl font-bold mb-8 uppercase tracking-widest text-white">Our investigative team is reviewing your submission.</p>
-          <Link href="/" className="inline-block bg-[#FFFF00] text-black font-inter font-black uppercase px-8 py-4 text-xl hover:bg-white transition-colors">
-            Return to Feed
-          </Link>
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <main className="min-h-screen bg-zinc-100 text-black">
-      <div className="max-w-3xl mx-auto px-4 py-16">
-        <div className="mb-12 border-l-8 border-[#FFFF00] pl-6">
-          <h1 className="text-5xl md:text-7xl font-inter font-black uppercase leading-none tracking-tighter mb-4">
-            ANONYMOUS <br /><span className="text-red-600">TIP LINE</span>
-          </h1>
-          <p className="font-bold text-xl uppercase tracking-widest text-zinc-600">
-            Got a story the mainstream media is ignoring? We want it.
-          </p>
-        </div>
+    <main className="min-h-screen bg-white text-black p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-4xl font-black uppercase mb-2 text-red-600">Submit a Tip</h1>
+        <p className="text-gray-600 mb-8">
+          Got a story we should know about? Anonymous tips welcome. We protect our sources.
+        </p>
 
-        <form onSubmit={handleSubmit} className="bg-white border-8 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex flex-col gap-6">
-          <div>
-            <label className="block font-inter font-black uppercase text-xl mb-2">HEADLINE / SUBJECT</label>
+        {status === 'success' && (
+          <div className="bg-[#FFFF00] border-4 border-black p-4 mb-6">
+            <p className="font-black uppercase">Tip received. Thanks.</p>
+            <p className="text-sm mt-1">If we publish, you'll see it on the front page.</p>
+          </div>
+        )}
+
+        {status === 'error' && (
+          <div className="bg-red-100 border-4 border-red-600 p-4 mb-6">
+            <p className="font-black uppercase">Something went wrong.</p>
+            <p className="text-sm mt-1">Please try again later.</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <label className="block">
+            <span className="text-xs font-black uppercase">Headline (what's the story?)</span>
             <input
               type="text"
               required
+              maxLength={200}
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="What are they hiding?"
-              className="w-full border-4 border-black p-4 text-lg font-bold focus:outline-none focus:border-[#FFFF00] bg-zinc-50"
+              onChange={e => setTitle(e.target.value)}
+              className="block w-full mt-1 border-2 border-black p-3"
+              placeholder="e.g., Leaked docs show..."
             />
-          </div>
+          </label>
 
-          <div>
-            <label className="block font-inter font-black uppercase text-xl mb-2">THE REAL STORY</label>
+          <label className="block">
+            <span className="text-xs font-black uppercase">The full story</span>
             <textarea
               required
-              value={story}
-              onChange={(e) => setStory(e.target.value)}
-              placeholder="Drop the truth here. We protect our sources."
+              minLength={50}
+              maxLength={5000}
               rows={8}
-              className="w-full border-4 border-black p-4 text-lg font-serif focus:outline-none focus:border-[#FFFF00] bg-zinc-50"
+              value={story}
+              onChange={e => setStory(e.target.value)}
+              className="block w-full mt-1 border-2 border-black p-3"
+              placeholder="Tell us what you know. Links, dates, names, whatever you've got."
             />
-          </div>
+          </label>
 
-          <div>
-            <label className="block font-inter font-black uppercase text-xl mb-2">EVIDENCE (OPTIONAL URL)</label>
-            <input
-              type="url"
-              placeholder="Link to image/video/doc"
-              className="w-full border-4 border-black p-4 text-lg font-bold focus:outline-none focus:border-[#FFFF00] bg-zinc-50"
-            />
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-gray-500">
+              Anonymous. No email required. No tracking.
+            </p>
+            <button
+              type="submit"
+              disabled={status === 'submitting'}
+              className="bg-[#FFFF00] border-4 border-black px-6 py-3 font-black uppercase disabled:opacity-50"
+            >
+              {status === 'submitting' ? 'Sending...' : 'Send Tip'}
+            </button>
           </div>
-
-          <button
-            type="submit"
-            disabled={status === 'submitting'}
-            className="mt-6 bg-[#FFFF00] text-black border-4 border-black font-inter font-black uppercase text-2xl py-6 hover:bg-black hover:text-[#FFFF00] transition-colors"
-          >
-            {status === 'submitting' ? 'SECURELY TRANSMITTING...' : 'SUBMIT ANONYMOUS TIP'}
-          </button>
         </form>
+
+        <div className="mt-8 text-sm">
+          <Link href="/" className="text-red-600 font-black uppercase">← Back to homepage</Link>
+        </div>
       </div>
     </main>
   );
