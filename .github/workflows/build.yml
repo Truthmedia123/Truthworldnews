@@ -41,8 +41,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          # Buildx needed for multi-arch builds (amd64 for CI, arm64 for Oracle Cloud)
-          platforms: linux/amd64,linux/arm64
+          # CI builds amd64 only — arm64 builds time out under QEMU emulation.
+          # Build arm64 directly on the Oracle Cloud A1 host:
+          #   docker build -t ghcr.io/truthmedia123/truthworldnews:latest --platform linux/arm64 .
+          #   docker push ghcr.io/truthmedia123/truthworldnews:latest
+          platforms: linux/amd64
 
       - name: Log in to GHCR
         if: github.event_name != 'pull_request'

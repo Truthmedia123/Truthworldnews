@@ -1,3 +1,15 @@
+# netlify.toml
+#
+# SKIPPED — this repo now deploys as a self-hosted Docker container.
+# See Dockerfile + docker-compose.twn-nextjs.yml for the new deploy target.
+#
+# To fully disable Netlify for this repo:
+#   1. Go to https://app.netlify.com/sites/truthworldnews/settings/deploys
+#   2. Click "Disconnect repository" (or delete the site)
+#
+# This file is kept to force Netlify to skip builds until the repo is disconnected.
+
 [build]
-  command = "npm run build"
-  publish = "out"
+  command = "echo 'Deploy target changed to Docker — see Dockerfile. Skipping Netlify build.'"
+  publish = "."
+  ignore = "exit 0"
