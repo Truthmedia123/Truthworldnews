@@ -1,0 +1,104 @@
+# docker-compose.twn-nextjs.yml
+#
+# Service definition for twn-nextjs. Paste into the main docker-compose.yml
+# of the v5.7 stack.
+#
+# Resource limits:
+#   - RAM: 300 MB (per v5.7 spec — tier-1 foundation citizen)
+#   - CPU: 0.5 shares (won't compete with Ghost/Postgres)
+#
+# Networking:
+#   - Joins the existing `twn-net` overlay network
+#   - No public port binding — Caddy reverse-proxies news.truthworldnews.com → :3000
+#
+# Restart policy:
+#   - unless-stopped (survives reboots, doesn't restart if manually stopped)
+
+services:
+  twn-nextjs:
+    image: ghcr.io/truthmedia123/twn-nextjs:latest
+    container_name: twn-nextjs
+    restart: unless-stopped
+    profiles:
+      - always
+    networks:
+      - twn-net
+    environment:
+      # ── Ghost ──────────────────────────────────────────────────────────────
+      NEXT_PUBLIC_GHOST_URL: "https://news.truthworldnews.com"
+      GHOST_INTERNAL_URL: "http://ghost:2368"
+      GHOST_CONTENT_API_KEY: ${GHOST_CONTENT_API_KEY}
+      GHOST_ADMIN_API_KEY: ${GHOST_ADMIN_API_KEY}
+      GHOST_AUTHOR_EMAIL: "zane@truthworldnews.com"
+
+      # ── Meilisearch ────────────────────────────────────────────────────────
+      NEXT_PUBLIC_MEILI_HOST: "https://api.truthworldnews.com/search"
+      MEILI_HOST: "http://meilisearch:7700"
+      MEILI_API_KEY: ${MEILI_API_KEY}
+      NEXT_PUBLIC_MEILI_SEARCH_KEY: ${NEXT_PUBLIC_MEILI_SEARCH_KEY}
+
+      # ── imgproxy ───────────────────────────────────────────────────────────
+      IMGPROXY_URL: "https://img.truthworldnews.com"
+      IMGPROXY_KEY: ${IMGPROXY_KEY}
+      IMGPROXY_SALT: ${IMGPROXY_SALT}
+
+      # ── remark42 ───────────────────────────────────────────────────────────
+      NEXT_PUBLIC_REMARK42_URL: "https://admin.truthworldnews.com/remark42"
+      NEXT_PUBLIC_REMARK42_SITE_ID: "twn"
+
+      # ── Plausible ──────────────────────────────────────────────────────────
+      NEXT_PUBLIC_PLAUSIBLE_DOMAIN: "news.truthworldnews.com"
+      NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC: "https://admin.truthworldnews.com/plausible/js/script.js"
+
+      # ── Postgres (non-article data) ────────────────────────────────────────
+      POSTGRES_URL: "postgres://twn:${POSTGRES_PASSWORD}@postgres:5432/twn"
+
+      # ── Admin auth ─────────────────────────────────────────────────────────
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      ADMIN_EMAIL: "zane@truthworldnews.com"
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH}
+
+      # ── API ────────────────────────────────────────────────────────────────
+      API_SECRET_KEY: ${API_SECRET_KEY}
+      NEXT_PUBLIC_SITE_URL: "https://news.truthworldnews.com"
+
+      # ── listmonk (optional, for newsletter sync) ───────────────────────────
+      LISTMONK_URL: "http://listmonk:9000"
+      LISTMONK_USER: ${LISTMONK_USER:-}
+      LISTMONK_PASS: ${LISTMONK_PASS:-}
+      LISTMONK_LIST_ID: "1"
+
+      # ── CDN ────────────────────────────────────────────────────────────────
+      NEXT_PUBLIC_CDN_URL: "https://cdn.truthworldnews.com"
+
+      # ── Analytics (kept from repo — parallel to Plausible) ──────────────────
+      NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID:-}
+      NEXT_PUBLIC_CLARITY_ID: ${NEXT_PUBLIC_CLARITY_ID:-}
+      NEXT_PUBLIC_ADSENSE_ID: ${NEXT_PUBLIC_ADSENSE_ID:-}
+
+      # ── Runtime ────────────────────────────────────────────────────────────
+      NODE_ENV: "production"
+      PORT: "3000"
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+        reservations:
+          memory: 256M
+      restart_policy:
+        condition: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "com.truthworldnews.service=nextjs"
+      - "com.truthworldnews.tier=foundation"
+      - "traefik.enable=false"  # Caddy handles routing, not Traefik

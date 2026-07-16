@@ -1,6 +1,34 @@
-import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
-import { z } from 'zod'
+/**
+ * src/app/api/post-news/route.ts
+ *
+ * Endpoint the Python pipeline POSTs to after generating an article draft.
+ * Replaces the Supabase-insert version.
+ *
+ * Auth: Bearer API_SECRET_KEY (same as before — Python pipeline sends this)
+ * Body: same zod schema as before (so pipeline doesn't need code changes)
+ * Side effects (NEW):
+ *   1. Creates a Ghost draft via Ghost Admin API
+ *   2. Sets all 8 custom fields via codeinjection_metadata
+ *   3. Sets the primary tag from the `category` field
+ *   4. Sets author to Zane Edge
+ *   5. Logs to Postgres editorial_log
+ *   6. Returns Ghost slug (not Supabase UUID)
+ *
+ * The Python pipeline (scripts/llm_engine.py, scripts/distribute.py) doesn't
+ * need any changes — it still POSTs the same JSON to the same URL.
+ */
+
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { ghostAdmin } from '@/lib/ghost-admin';
+import { logEditorialAction } from '@/lib/postgres';
+import { categoryToGhostTag } from '@/lib/categories';
+
+const ZANE_EDGE_EMAIL = process.env.GHOST_AUTHOR_EMAIL || 'zane@truthworldnews.com';
+
+// ---------------------------------------------------------------------------
+// Schema (matches the existing repo's zod schema exactly)
+// ---------------------------------------------------------------------------
 
 const articleSchema = z.object({
   title: z.string().min(10).max(200),
@@ -10,7 +38,7 @@ const articleSchema = z.object({
   category: z.enum(['AI', 'Crypto', 'Weird Tech', 'Leaks', 'Rants', 'Investigations', 'News', 'WORLD']),
   sources: z.array(z.object({
     title: z.string(),
-    url: z.string().url()
+    url: z.string().url(),
   })).min(1).max(5).optional(),
   video_script: z.string().optional(),
   image_description: z.string().optional(),
@@ -18,38 +46,116 @@ const articleSchema = z.object({
   hype_meter: z.string().optional(),
   is_rumor: z.boolean().optional(),
   safety_score: z.number().optional(),
-})
+});
+
+// ---------------------------------------------------------------------------
+// POST handler
+// ---------------------------------------------------------------------------
 
 export async function POST(request: Request) {
-  try {
-    const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${process.env.API_SECRET_KEY}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const body = await request.json()
-    const result = articleSchema.safeParse(body)
-    
-    if (!result.success) {
-      return NextResponse.json(
-        { error: 'Validation failed', details: result.error.flatten() },
-        { status: 400 }
-      )
-    }
-
-    const { data, error } = await supabaseAdmin
-      .from('posts')
-      .insert([{ 
-        ...result.data, 
-        status: 'draft', 
-        is_published: false 
-      }])
-      .select()
-
-    if (error) throw error
-
-    return NextResponse.json({ success: true, post: data[0] })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  // 1. Verify Bearer token
+  const authHeader = request.headers.get('authorization');
+  if (authHeader !== `Bearer ${process.env.API_SECRET_KEY}`) {
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'BAD_BEARER' },
+      { status: 401 },
+    );
   }
+
+  // 2. Parse + validate body
+  let body: z.infer<typeof articleSchema>;
+  try {
+    const raw = await request.json();
+    body = articleSchema.parse(raw);
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: 'Validation failed', details: err.flatten?.() ?? err.message },
+      { status: 400 },
+    );
+  }
+
+  // 3. Map category → Ghost tag
+  const ghostTag = categoryToGhostTag(body.category);
+  if (!ghostTag) {
+    return NextResponse.json(
+      { error: `Unknown category: ${body.category}` },
+      { status: 400 },
+    );
+  }
+
+  // 4. Build sources JSON for storage
+  const sourcesJson = body.sources ? JSON.stringify(body.sources) : undefined;
+
+  // 5. Create Ghost draft
+  let ghostPost;
+  try {
+    ghostPost = await ghostAdmin.createPost({
+      title: body.title,
+      html: `<p>${body.content.split('\n\n').join('</p><p>')}</p>`,
+      plaintext: body.content,
+      feature_image: body.image_url || undefined,
+      feature_image_alt: body.image_description || undefined,
+      status: 'draft',
+      tags: [ghostTag],
+      authors: [ZANE_EDGE_EMAIL],
+      custom_excerpt: body.tldr_summary,
+      tldr_summary: body.tldr_summary,
+      hype_meter: body.hype_meter,
+      is_rumor: body.is_rumor,
+      safety_score: body.safety_score,
+      video_script: body.video_script,
+      content_hash: body.content_hash,
+      sources: sourcesJson,
+      video_requested: false,
+    });
+  } catch (err: any) {
+    console.error('[post-news] Ghost create failed:', err);
+    return NextResponse.json(
+      { error: 'Failed to create draft in Ghost', details: err.message },
+      { status: 502 },
+    );
+  }
+
+  // 6. Log to editorial_log (non-blocking)
+  logEditorialAction({
+    article_slug: ghostPost.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled',
+    action: 'draft_created',
+    details: `Auto-generated by Python pipeline. Category: ${body.category}.`,
+    performed_by: 'python-pipeline',
+  }).catch(err => console.error('[post-news] editorial_log write failed:', err));
+
+  // 7. Index in Meilisearch (non-blocking)
+  fetch(`${process.env.MEILI_HOST || 'http://meilisearch:7700'}/indexes/twn_articles/documents?primaryKey=slug`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.MEILI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify([{
+      slug: ghostPost.slug,
+      title: ghostPost.title,
+      tldr_summary: body.tldr_summary,
+      content: body.content,
+      category: body.category,
+      tags: [ghostTag],
+      status: 'draft',
+      published_at: null,
+      created_at: ghostPost.created_at,
+    }]),
+  }).catch(err => console.error('[post-news] Meilisearch index failed:', err));
+
+  // 8. Return Ghost slug (not Supabase UUID)
+  return NextResponse.json({
+    success: true,
+    post: {
+      slug: ghostPost.slug,
+      id: ghostPost.id,
+      url: ghostPost.url,
+    },
+  });
+}
+
+// Health check
+export async function GET() {
+  return NextResponse.json({ ok: true, endpoint: '/api/post-news' });
 }

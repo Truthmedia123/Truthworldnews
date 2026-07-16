@@ -1,75 +1,77 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 
-export default function AdminLogin() {
+export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Login failed');
+        return;
+      }
+      router.push('/admin/dashboard');
+      router.refresh();
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
       setLoading(false);
-    } else {
-      window.location.href = '/admin/dashboard';
     }
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <div className="bg-white p-8 max-w-md w-full border-4 border-[#FFFF00] shadow-[8px_8px_0px_0px_rgba(255,255,0,1)]">
-        <h1 className="text-4xl font-inter font-black uppercase text-black mb-6 text-center">
-          Admin <span className="text-red-600">Access</span>
-        </h1>
-        
-        {error && (
-          <div className="bg-red-100 border-l-4 border-red-600 text-red-700 p-4 mb-6 font-bold">
-            {error}
-          </div>
-        )}
+    <main className="min-h-screen bg-white text-black flex items-center justify-center p-8">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm border-4 border-black p-6 bg-white">
+        <h1 className="text-2xl font-black uppercase mb-6 text-red-600">Admin Login</h1>
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label className="block font-inter font-bold uppercase text-sm mb-2 text-black">Email</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border-2 border-black p-3 font-serif focus:outline-none focus:border-[#FFFF00] focus:ring-2 focus:ring-[#FFFF00] text-black"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-inter font-bold uppercase text-sm mb-2 text-black">Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border-2 border-black p-3 font-serif focus:outline-none focus:border-[#FFFF00] focus:ring-2 focus:ring-[#FFFF00] text-black"
-              required
-            />
-          </div>
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-black text-[#FFFF00] font-inter font-black uppercase py-4 border-2 border-black hover:bg-[#FFFF00] hover:text-black transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Authenticating...' : 'Enter Mainframe'}
-          </button>
-        </form>
-      </div>
-    </div>
+        {error && <div className="bg-red-100 border-2 border-red-600 p-2 mb-4 text-sm">{error}</div>}
+
+        <label className="block mb-4">
+          <span className="text-xs font-black uppercase">Email</span>
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="block w-full mt-1 border-2 border-black p-2"
+          />
+        </label>
+
+        <label className="block mb-6">
+          <span className="text-xs font-black uppercase">Password</span>
+          <input
+            type="password"
+            required
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="block w-full mt-1 border-2 border-black p-2"
+          />
+        </label>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#FFFF00] border-2 border-black p-3 font-black uppercase disabled:opacity-50"
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+    </main>
   );
 }

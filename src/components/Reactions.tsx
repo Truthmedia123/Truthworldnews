@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
 
 type ReactionType = 'LOL' | 'OMFG' | 'TRASH' | 'WTF' | 'LEGEND';
 const REACTION_TYPES: ReactionType[] = ['LOL', 'OMFG', 'TRASH', 'WTF', 'LEGEND'];
@@ -28,127 +27,124 @@ function spawnConfetti() {
   }
 }
 
-export default function Reactions({ postId }: { postId: string }) {
-  const [counts, setCounts] = useState<ReactionCounts>({
-    LOL: 0, OMFG: 0, TRASH: 0, WTF: 0, LEGEND: 0
-  });
-  const [hasReacted, setHasReacted] = useState<boolean>(false);
-  const [showResults, setShowResults] = useState<boolean>(false);
+interface ReactionsProps {
+  articleId: string;
+}
 
-  // Fallback to randomized values for mock posts or if DB fails
-  const isMockPost = postId.startsWith('mock-');
+export default function Reactions({ articleId }: ReactionsProps) {
+  const [counts, setCounts] = useState<ReactionCounts>({
+    LOL: 0, OMFG: 0, TRASH: 0, WTF: 0, LEGEND: 0,
+  });
+  const [userReactions, setUserReactions] = useState<Set<ReactionType>>(new Set());
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState<string | null>(null);
+
+  const fetchCounts = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/reactions?articleId=${encodeURIComponent(articleId)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const next: ReactionCounts = { LOL: 0, OMFG: 0, TRASH: 0, WTF: 0, LEGEND: 0 };
+      for (const r of (data.counts || [])) {
+        if (next.hasOwnProperty(r.reaction_type)) {
+          next[r.reaction_type as ReactionType] = r.count;
+        }
+      }
+      setCounts(next);
+      if (data.userReactions) {
+        setUserReactions(new Set(data.userReactions as ReactionType[]));
+      }
+    } catch (err) {
+      console.error('Failed to fetch reactions:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [articleId]);
 
   useEffect(() => {
-    const fetchReactions = async () => {
-      if (isMockPost) {
-        // Randomize some mock counts
-        setCounts({
-          LOL: Math.floor(Math.random() * 500) + 100,
-          OMFG: Math.floor(Math.random() * 300) + 50,
-          TRASH: Math.floor(Math.random() * 800) + 200,
-          WTF: Math.floor(Math.random() * 1000) + 300,
-          LEGEND: Math.floor(Math.random() * 100) + 10,
-        });
-        return;
-      }
+    fetchCounts();
+  }, [fetchCounts]);
 
-      // Fetch from Supabase
-      const { data, error } = await supabase
-        .from('reactions')
-        .select('reaction_type');
+  const handleReact = async (type: ReactionType) => {
+    if (submitting) return;
+    setSubmitting(type);
+    const wasReacted = userReactions.has(type);
 
-      if (!error && data) {
-        const fetchedCounts = { LOL: 0, OMFG: 0, TRASH: 0, WTF: 0, LEGEND: 0 };
-        data.forEach(row => {
-          if (fetchedCounts[row.reaction_type as ReactionType] !== undefined) {
-            fetchedCounts[row.reaction_type as ReactionType]++;
-          }
-        });
-        setCounts(fetchedCounts);
-      }
-    };
-
-    fetchReactions();
-  }, [postId, isMockPost]);
-
-  const handleReact = useCallback(async (type: ReactionType) => {
-    if (hasReacted) return;
-
-    // Optimistic UI update
+    // Optimistic update
     setCounts(prev => ({
       ...prev,
-      [type]: prev[type] + 1
+      [type]: wasReacted ? Math.max(0, prev[type] - 1) : prev[type] + 1,
     }));
-    setHasReacted(true);
-    setShowResults(true);
+    setUserReactions(prev => {
+      const next = new Set(prev);
+      if (wasReacted) next.delete(type);
+      else next.add(type);
+      return next;
+    });
 
-    // Confetti for LEGEND vote
-    if (type === 'LEGEND') {
-      spawnConfetti();
+    if (!wasReacted) spawnConfetti();
+
+    try {
+      await fetch('/api/reactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ articleId, reactionType: type }),
+      });
+    } catch (err) {
+      // Revert on failure
+      setCounts(prev => ({
+        ...prev,
+        [type]: wasReacted ? prev[type] + 1 : Math.max(0, prev[type] - 1),
+      }));
+      setUserReactions(prev => {
+        const next = new Set(prev);
+        if (wasReacted) next.add(type);
+        else next.delete(type);
+        return next;
+      });
+    } finally {
+      setSubmitting(null);
     }
+  };
 
-    if (!isMockPost) {
-      // Async database save
-      await supabase.from('reactions').insert([
-        { post_id: postId, reaction_type: type }
-      ]);
-    }
-  }, [hasReacted, isMockPost, postId]);
-
-  const totalVotes = Object.values(counts).reduce((sum, c) => sum + c, 0);
+  if (loading) {
+    return (
+      <div className="border-4 border-black p-4 bg-white">
+        <div className="text-black font-black uppercase text-sm mb-3">Loading reactions...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="py-4 mt-4 mb-6 flex flex-col items-center justify-center">
-      <h3 className="text-lg md:text-xl font-inter font-black uppercase tracking-tighter mb-3 text-black text-center">
-        HOW DOES THIS MAKE YOU FEEL?
-      </h3>
-
-      <div className="flex flex-wrap justify-center gap-1">
+    <div className="border-4 border-black p-4 bg-white">
+      <div className="text-black font-black uppercase text-sm mb-3">React to this</div>
+      <div className="grid grid-cols-5 gap-2">
         {REACTION_TYPES.map((type) => {
-          const EMOJI_MAP: Record<ReactionType, string> = {
-            LOL: '😂',
-            OMFG: '😱',
-            TRASH: '🗑️',
-            WTF: '🤯',
-            LEGEND: '👑'
-          };
-
-          const percentage = totalVotes > 0 ? Math.round((counts[type] / totalVotes) * 100) : 0;
-
+          const isReacted = userReactions.has(type);
+          const count = counts[type];
           return (
             <button
               key={type}
               onClick={() => handleReact(type)}
-              disabled={hasReacted}
+              disabled={submitting !== null}
               className={`
-                min-h-[44px] min-w-[44px] flex flex-col items-center justify-center p-1 border border-black
-                font-inter font-black uppercase text-[10px]
-                transition-all duration-300 transform relative overflow-hidden
-                ${hasReacted
-                  ? 'opacity-60 cursor-not-allowed bg-zinc-200 text-gray-500'
-                  : 'hover:-translate-y-1 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FFFF00] bg-white text-black cursor-pointer'
-                }
+                flex flex-col items-center justify-center p-3 border-2 border-black
+                font-black uppercase text-xs transition-all
+                ${isReacted
+                  ? 'bg-[#FFFF00] text-black scale-105'
+                  : 'bg-white text-black hover:bg-[#FFFF00] hover:scale-105'}
+                ${submitting === type ? 'animate-pulse' : ''}
+                disabled:opacity-50 disabled:cursor-not-allowed
               `}
+              aria-pressed={isReacted}
+              aria-label={`React ${type}`}
             >
-              <span className="text-[10px] font-bold text-red-600 tracking-widest">{counts[type]}</span>
-              <span className="text-xl">{EMOJI_MAP[type]}</span>
-              <span>{type}</span>
-              {/* Animated result bar */}
-              {showResults && (
-                <div
-                  className="absolute bottom-0 left-0 h-1 bg-[#FFFF00] transition-all duration-700 ease-out"
-                  style={{ width: `${percentage}%` }}
-                />
-              )}
+              <span className="text-lg leading-none">{type}</span>
+              <span className="text-sm mt-1">{count}</span>
             </button>
           );
         })}
       </div>
-      {hasReacted && (
-        <p className="mt-3 font-inter font-bold uppercase tracking-widest text-[10px] text-green-600 bg-green-100 px-2 py-1 border border-green-600 animate-bounce">
-          YOUR REACTION HAS BEEN RECORDED
-        </p>
-      )}
     </div>
   );
 }
